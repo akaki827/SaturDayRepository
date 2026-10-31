@@ -1,23 +1,37 @@
-#include <iostream>
-#include <vector>
+#include"dxlib.h"
+#include"Config.h"
+#include"Map.h"
 
-
-int main()
+int WINAPI WinMain(HINSTANCE hIstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	
-	//ベクターを宣言
-	std::vector<int> number;
-	std::vector<float> number2;
-	//追加
-	number.push_back(10);
-	number.push_back(20);
-	number.push_back(30);
-	//要素数確認
-	std::cout << number.size() << std::endl;
-	//
-	int num = number[0];
-	std::cout << num ;
-	//削除
-	number.clear();
+	ChangeWindowMode(TRUE);
+	if (DxLib_Init() == -1)return -1;
+	SetDrawScreen(DX_SCREEN_BACK);
+	//マップを管理するオブジェクト
+	Map map;
+
+	//マップが読み込みできなかったら
+	if (!map.Init())
+	{
+		map.Finalize();
+		DxLib_End();
+		return -1;
+	}
+
+	//ゲームループ
+
+	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
+	{
+		ClearDrawScreen();
+
+		//マップの描画
+		map.Draw();
+
+		ScreenFlip();
+	}
+
+	map.Finalize();
+	DxLib_End();
+
 	return 0;
 }
